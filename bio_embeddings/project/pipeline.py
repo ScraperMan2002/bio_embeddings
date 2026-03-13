@@ -153,25 +153,6 @@ def pb_tucker(
 
     return result_kwargs
 
-    reduced_embeddings_file_path = result_kwargs["reduced_embeddings_file"]
-    projected_reduced_embeddings_file_path = file_manager.create_file(
-        result_kwargs.get("prefix"),
-        result_kwargs.get("stage_name"),
-        "projected_reduced_embeddings_file",
-        extension=".h5",
-    )
-    result_kwargs[
-        "projected_reduced_embeddings_file"
-    ] = projected_reduced_embeddings_file_path
-
-    with h5py.File(reduced_embeddings_file_path, "r") as input_embeddings, h5py.File(
-        projected_reduced_embeddings_file_path, "w"
-    ) as output_embeddings:
-        for h5_id, reduced_embedding in input_embeddings.items():
-            output_embeddings[h5_id] = pb_tucker.project_reduced_embedding(reduced_embedding)
-
-    return result_kwargs
-
 
 # list of available projection protocols
 PROTOCOLS = {
