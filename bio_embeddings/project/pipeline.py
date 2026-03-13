@@ -5,7 +5,7 @@ import h5py
 import numpy as np
 from pandas import DataFrame
 
-from bio_embeddings.project.pb_tucker import PBTucker
+from bio_embeddings.project.pb_tucker import pb_tucker_reduce
 from bio_embeddings.project.tsne import tsne_reduce
 from bio_embeddings.project.umap import umap_reduce
 from bio_embeddings.utilities import (
@@ -120,13 +120,38 @@ def umap(file_manager: FileManagerInterface, result_kwargs: Dict[str, Any]) -> D
 def pb_tucker(
     file_manager: FileManagerInterface, result_kwargs: Dict[str, Any]
 ) -> Dict[str, Any]:
+
+    # Get sequence mapping to use as information source
+    mapping = read_mapping_file(result_kwargs["mapping_file"])
+
+    reduced_embeddings_file_path = result_kwargs['reduced_embeddings_file']
+
+    reduced_embeddings = []
+
+    with h5py.File(reduced_embeddings_file_path, 'r') as f:
+        for remapped_id in mapping.index:
+            reduced_embeddings.append(np.array(f[str(remapped_id)]))
+
+    # Get important variables
     device = get_device(result_kwargs.get("device"))
 
     if "model_file" not in result_kwargs:
         model_file = get_model_file("pb_tucker", "model_file")
     else:
         model_file = result_kwargs["model_file"]
+
+    # Get parameters or set defaults
+    result_kwargs.setdefault('n_components', 3)
+    result_kwargs.setdefault('model_file', model_file)
+    result_kwargs.setdefault('device_object', device)
+    
+    projected_embeddings = pb_tucker_reduce(reduced_embeddings, **result_kwargs)
+
     pb_tucker = PBTucker(model_file, device)
+
+    write_embeddings(mapping, projected_embeddings, result_kwargs, file_manager)
+
+    return result_kwargs
 
     reduced_embeddings_file_path = result_kwargs["reduced_embeddings_file"]
     projected_reduced_embeddings_file_path = file_manager.create_file(
