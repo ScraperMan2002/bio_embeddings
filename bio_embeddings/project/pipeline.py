@@ -133,7 +133,7 @@ def pb_tucker(
         result_kwargs.get("prefix"),
         result_kwargs.get("stage_name"),
         "projected_reduced_embeddings_file",
-        extension=".csv",
+        extension=".h5",
     )
     result_kwargs[
         "projected_reduced_embeddings_file"
