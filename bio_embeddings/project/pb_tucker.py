@@ -52,9 +52,7 @@ class PBTucker:
             )
             return self.model.tucker(reduced_embedding_tensor).cpu().numpy()
     def fit_transform(self, embeddings: ndarray):
-        if self.n_components != 128:
-            return [embedding[:self.n_components] for embedding in embeddings]
-        return embeddings
+        return [embedding[:self.n_components] for embedding in embeddings]
 
 
 def tsne_reduce(embeddings, **kwargs):
