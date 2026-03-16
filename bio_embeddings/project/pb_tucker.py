@@ -55,7 +55,7 @@ class PBTucker:
         return [embedding[:self.n_components] for embedding in embeddings]
 
 
-def tsne_reduce(embeddings, **kwargs):
+def pb_tucker_reduce(embeddings, **kwargs):
     """Wrapper around :meth:`sklearn.manifold.TSNE` with defaults for bio_embeddings"""
     pb_tucker_params = dict()
 
