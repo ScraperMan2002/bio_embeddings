@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Union
 
 import torch
-import numpy import np
+import numpy as np
 from torch import nn
 
 
