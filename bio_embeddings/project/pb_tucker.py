@@ -35,7 +35,7 @@ class PBTucker:
     _device: torch.device
     name: str = "pb_tucker"
 
-    def __init__(self, model_file: Union[str, Path], device: torch.device):
+    def __init__(self, model_file: Union[str, Path], device: torch.device, n_components: int):
         self._device = device
         self.model = PBTuckerModel()
         self.model.load_state_dict(
@@ -43,6 +43,7 @@ class PBTucker:
         )
         self.model.eval()
         self.model = self.model.to(self._device)
+        self.n_components = n_components
 
     def project_reduced_embedding(self, reduced_embedding: ndarray) -> ndarray:
         with torch.no_grad():
@@ -50,3 +51,20 @@ class PBTucker:
                 reduced_embedding, device=self._device
             )
             return self.model.tucker(reduced_embedding_tensor).cpu().numpy()
+    def fit_transform(self, embeddings: ndarray):
+        if self.n_components != 128:
+            return [embedding[:self.n_components] for embedding in embeddings]
+        return embeddings
+
+
+def tsne_reduce(embeddings, **kwargs):
+    """Wrapper around :meth:`sklearn.manifold.TSNE` with defaults for bio_embeddings"""
+    pb_tucker_params = dict()
+
+    pb_tucker_params['n_components'] = kwargs.get('n_components', 3)
+    pb_tucker_params['model_file'] = kwargs.get('model_file', None)
+    pb_tucker_params['device'] = kwargs.get('device_object', None)
+
+    transformed_embeddings = PBTucker(**pb_tucker_params).fit_transform(embeddings)
+
+    return transformed_embeddings
