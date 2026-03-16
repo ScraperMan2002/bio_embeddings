@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Union
 
 import torch
-from numpy import ndarray
+import numpy import np
 from torch import nn
 
 
@@ -51,8 +51,8 @@ class PBTucker:
                 reduced_embedding, device=self._device
             )
             return self.model.tucker(reduced_embedding_tensor).cpu().numpy()
-    def fit_transform(self, embeddings: ndarray):
-        return [embedding[:self.n_components] for embedding in embeddings]
+    def fit_transform(self, embeddings: ndarray) -> ndarray:
+        return np.array([embedding[:self.n_components] for embedding in embeddings])
 
 
 def pb_tucker_reduce(embeddings, **kwargs):
