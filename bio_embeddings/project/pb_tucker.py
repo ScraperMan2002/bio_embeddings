@@ -45,13 +45,13 @@ class PBTucker:
         self.model = self.model.to(self._device)
         self.n_components = n_components
 
-    def project_reduced_embedding(self, reduced_embedding: ndarray) -> ndarray:
+    def project_reduced_embedding(self, reduced_embedding: np.ndarray) -> np.ndarray:
         with torch.no_grad():
             reduced_embedding_tensor = torch.tensor(
                 reduced_embedding, device=self._device
             )
             return self.model.tucker(reduced_embedding_tensor).cpu().numpy()
-    def fit_transform(self, embeddings: ndarray) -> ndarray:
+    def fit_transform(self, embeddings: np.ndarray) -> np.ndarray:
         return np.array([embedding[:self.n_components] for embedding in embeddings])
 
 
