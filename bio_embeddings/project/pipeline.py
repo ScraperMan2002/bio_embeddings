@@ -147,8 +147,6 @@ def pb_tucker(
     
     projected_embeddings = pb_tucker_reduce(reduced_embeddings, **result_kwargs)
 
-    pb_tucker = PBTucker(model_file, device)
-
     write_embeddings(mapping, projected_embeddings, result_kwargs, file_manager)
 
     return result_kwargs
