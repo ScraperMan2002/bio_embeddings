@@ -377,11 +377,12 @@ def run(**kwargs):
     embedder: EmbedderInterface = embedder_class(**result_kwargs)
     _check_transform_embeddings_function(embedder, result_kwargs)
 
-    # TODO: Remove when done
-    print("-------------------DEBUG PARAM VALUES----------------------------")
-    print("embedder: ", str(embedder))
-    print("file_manager: ", str(file_manager))
-    print("result_kwargs: ", str(result_kwargs))
-    print("half_precision: ", str(kwargs.get("half_precision", False)))
-    print("-------------------DEBUG PARAM VALUES----------------------------")
+    # TODO: For if one wants to cache embedding vectors using relevant variables:
+    # Variables important for generating embeddings:
+    # result_kwargs["remapped_sequences_file"]
+    # result_kwargs["protocol"]
+    # result_kwargs["max_amino_acids"]
+    # result_kwargs["embeddings_transformer_function"]
+    # half_precision
+
     return embed_and_write_batched(embedder, file_manager, result_kwargs, kwargs.get("half_precision", False))
