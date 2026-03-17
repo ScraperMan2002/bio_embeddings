@@ -4,6 +4,10 @@ from typing import Union
 import torch
 import numpy as np
 from torch import nn
+from bio_embeddings.utilities import (
+    get_model_file,
+    get_device
+)
 
 
 class PBTuckerModel(nn.Module):
@@ -60,8 +64,14 @@ def pb_tucker_reduce(embeddings, **kwargs):
     pb_tucker_params = dict()
 
     pb_tucker_params['n_components'] = kwargs.get('n_components', 3)
-    pb_tucker_params['model_file'] = kwargs.get('model_file', None)
-    pb_tucker_params['device'] = kwargs.get('device_object', None)
+    
+    # Get important variables
+    pb_tucker_params['device'] = get_device(kwargs.get("device"))
+
+    if "model_file" not in kwargs:
+        pb_tucker_params['model_file'] = get_model_file("pb_tucker", "model_file")
+    else:
+        pb_tucker_params['model_file'] = kwargs["model_file"]
 
     transformed_embeddings = PBTucker(**pb_tucker_params).fit_transform(embeddings)
 
