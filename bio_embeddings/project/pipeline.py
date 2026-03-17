@@ -13,8 +13,6 @@ from bio_embeddings.utilities import (
     check_required,
     get_file_manager,
     FileManagerInterface,
-    get_model_file,
-    get_device,
     read_mapping_file,
 )
 
@@ -132,22 +130,10 @@ def pb_tucker(
         for remapped_id in mapping.index:
             reduced_embeddings.append(np.array(f[str(remapped_id)]))
 
-    # Get important variables
-    device = get_device(result_kwargs.get("device"))
-
-    if "model_file" not in result_kwargs:
-        model_file = get_model_file("pb_tucker", "model_file")
-    else:
-        model_file = result_kwargs["model_file"]
-
     # Get parameters or set defaults
     result_kwargs.setdefault('n_components', 3)
-    result_kwargs.setdefault('model_file', model_file)
-    result_kwargs.setdefault('device_object', device)
-    
-    projected_embeddings = pb_tucker_reduce(reduced_embeddings, **result_kwargs)
 
-    pb_tucker = PBTucker(model_file, device)
+    projected_embeddings = pb_tucker_reduce(reduced_embeddings, **result_kwargs)
 
     write_embeddings(mapping, projected_embeddings, result_kwargs, file_manager)
 
